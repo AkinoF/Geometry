@@ -1,6 +1,8 @@
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.Tooltip;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
@@ -49,7 +51,7 @@ public class Grap extends Application {
 
         // Создаем сцену
         Scene scene = new Scene(root, 500, 500);
-        primaryStage.setTitle("Graph with Axes and Function");
+        primaryStage.setTitle("ДА ЧТО ТАКОЕ ВАША ГЕОМЕТРИЯ");
         primaryStage.setScene(scene);
         primaryStage.show();
     }
@@ -79,10 +81,26 @@ public class Grap extends Application {
             line.setStroke(Color.BLUE);
             root.getChildren().add(line);
 
+            // Добавляем обработчик событий для отображения координат
+            addMouseHoverEvent(line, x, y);
+
             // Обновляем предыдущую точку
             prevX = x;
             prevY = y;
         }
+    }
+
+    private void addMouseHoverEvent(Line line, double x, double y) {
+        Tooltip tooltip = new Tooltip(String.format("(%.1f, %.1f)", x, y));
+        Tooltip.install(line, tooltip);
+
+        line.setOnMouseEntered(event -> {
+            tooltip.show(line, event.getScreenX(), event.getScreenY() + 10);
+        });
+
+        line.setOnMouseExited(event -> {
+            tooltip.hide();
+        });
     }
 
     private double calculateY(double x) {
