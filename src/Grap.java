@@ -44,11 +44,49 @@ public class Grap extends Application {
 
         root.getChildren().addAll(xLabel, yLabel);
 
+        // Рисуем график функции y = (x^2)/2 - 2
+        drawFunction(root);
+
         // Создаем сцену
         Scene scene = new Scene(root, 500, 500);
-        primaryStage.setTitle("Graph with Axes and Labels");
+        primaryStage.setTitle("Graph with Axes and Function");
         primaryStage.setScene(scene);
         primaryStage.show();
+    }
+
+    private void drawFunction(Group root) {
+        // Начальные и конечные значения x
+        double xStart = -20; // Начало диапазона
+        double xEnd = 20;    // Конец диапазона
+        double scaleX = 10;  // Масштаб по оси X
+        double scaleY = 10;  // Масштаб по оси Y
+
+        // Переменная для хранения предыдущей точки
+        double prevX = xStart;
+        double prevY = calculateY(prevX);
+
+        // Рисуем график
+        for (double x = xStart; x <= xEnd; x += 0.1) {
+            double y = calculateY(x);
+            // Преобразуем координаты в пиксели
+            double pixelX1 = 250 + (prevX * scaleX);
+            double pixelY1 = 250 - (prevY * scaleY);
+            double pixelX2 = 250 + (x * scaleX);
+            double pixelY2 = 250 - (y * scaleY);
+
+            // Рисуем линию между предыдущей и текущей точкой
+            Line line = new Line(pixelX1, pixelY1, pixelX2, pixelY2);
+            line.setStroke(Color.BLUE);
+            root.getChildren().add(line);
+
+            // Обновляем предыдущую точку
+            prevX = x;
+            prevY = y;
+        }
+    }
+
+    private double calculateY(double x) {
+        return (x * x) / 2 - 2; // Функция y = (x^2)/2 - 2
     }
 
     public static void main(String[] args) {
