@@ -2,7 +2,6 @@ import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Tooltip;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
@@ -54,6 +53,11 @@ public class Grap extends Application {
 
         // Рисуем график функции y = (x^2)/2 - 2
         drawFunction(root);
+
+        // Добавляем текстовое описание функции
+        Text functionDescription = new Text(100, 100, "y = (x^2)/2 - 2");
+        functionDescription.setFill(Color.BLUE);
+        root.getChildren().add(functionDescription);
 
         // Создаем сцену
         Scene scene = new Scene(root, 500, 500);
