@@ -5,6 +5,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
@@ -23,47 +24,64 @@ public class Grap extends Application {
         Line yAxis = new Line(250, 50, 250, 450);
         yAxis.setStroke(Color.BLACK);
 
-        // Создаем стрелочку для оси X
-        Line xArrow1 = new Line(450, 250, 440, 240);
-        Line xArrow2 = new Line(450, 250, 440, 260);
-        xArrow1.setStroke(Color.BLACK);
-        xArrow2.setStroke(Color.BLACK);
-
-        // Создаем стрелочку для оси Y
-        Line yArrow1 = new Line(250, 50, 240, 65);
-        Line yArrow2 = new Line(250, 50, 260, 65);
-        yArrow1.setStroke(Color.BLACK);
-        yArrow2.setStroke(Color.BLACK);
+        // Создаем стрелочки для осей
+        createArrow(root, 450, 250, 440, 240);
+        createArrow(root, 450, 250, 440, 260);
+        createArrow(root, 250, 50, 240, 65);
+        createArrow(root, 250, 50, 260, 65);
 
         // Добавляем оси и стрелочки в корневую группу
-        root.getChildren().addAll(xAxis, yAxis, xArrow1, xArrow2, yArrow1, yArrow2);
+        root.getChildren().addAll(xAxis, yAxis);
 
         // Добавляем текстовые метки для осей
         Text xLabel = new Text(460, 255, "X");
         Text yLabel = new Text(255, 30, "Y");
         xLabel.setFill(Color.BLACK);
         yLabel.setFill(Color.BLACK);
+        xLabel.setStyle("-fx-font-size: 14px;");
+        yLabel.setStyle("-fx-font-size: 14px;");
 
         root.getChildren().addAll(xLabel, yLabel);
 
-        // Добавляем значение 0 на оси Y
-        Text zeroLabelY = new Text(235, 250, "0");
-        zeroLabelY.setFill(Color.BLACK);
-        root.getChildren().add(zeroLabelY);
+        // Добавляем обозначения на оси Y
+        for (int i = -20; i <= 20; i += 5) { // Изменяем диапазон и шаг
+            Text label = new Text(230, 250 - (i * 10), String.valueOf(i)); // Увеличиваем масштаб для Y
+            label.setFill(Color.BLACK);
+            root.getChildren().add(label);
+        }
+
+        // Добавляем значение 0 на оси X
+        Text zeroLabelX = new Text(255, 265, "0");
+        zeroLabelX.setFill(Color.BLACK);
+        root.getChildren().add(zeroLabelX);
+
+        // Добавляем обозначения на оси X
+        for (int i = -20; i <= 20; i += 5) {
+            Text label = new Text(250 + (i * 10), 265, String.valueOf(i));
+            label.setFill(Color.BLACK);
+            root.getChildren().add(label);
+        }
 
         // Рисуем график функции y = (x^2)/2 - 2
         drawFunction(root);
 
         // Добавляем текстовое описание функции
-        Text functionDescription = new Text(100, 100, "y = (x^2)/2 - 2");
+        Text functionDescription = new Text(75, 100, "y = (x^2)/2 - 2");
         functionDescription.setFill(Color.BLUE);
+        functionDescription.setStyle("-fx-font-size: 16px;");
         root.getChildren().add(functionDescription);
 
         // Создаем сцену
         Scene scene = new Scene(root, 500, 500);
-        primaryStage.setTitle("ДА ЧТО ТАКОЕ ВАША ГЕОМЕТРИЯ");
+        primaryStage.setTitle("График функции");
         primaryStage.setScene(scene);
         primaryStage.show();
+    }
+
+    private void createArrow(Group root, double startX, double startY, double endX, double endY) {
+        Line arrow = new Line(startX, startY, endX, endY);
+        arrow.setStroke(Color.BLACK);
+        root.getChildren().add(arrow);
     }
 
     private void drawFunction(Group root) {
@@ -89,12 +107,17 @@ public class Grap extends Application {
             // Рисуем линию между предыдущей и текущей точкой
             Line line = new Line(pixelX1, pixelY1, pixelX2, pixelY2);
             line.setStroke(Color.BLUE);
+            line.setStrokeWidth(2); // Увеличиваем ширину линии
             root.getChildren().add(line);
 
             // Обновляем предыдущую точку
             prevX = x;
             prevY = y;
         }
+
+        // Добавляем точку (0, 0)
+        Circle point = new Circle(250, 250, 5, Color.RED);
+        root.getChildren().add(point);
 
         // Добавляем прозрачный прямоугольник для отслеживания курсора
         Rectangle trackingArea = new Rectangle(50, 50, 400, 400);
@@ -112,7 +135,7 @@ public class Grap extends Application {
 
             // Преобразуем пиксели в координаты графика
             double graphX = (mouseX - 250) / scaleX;
-            double graphY = (250 - mouseY) / scaleY;
+            double graphY = (250 - mouseY) / scaleY; // Получаем y по пиксельной координате
 
             // Форматируем координаты
             String coordinates = String.format("X: %.1f, Y: %.1f", graphX, graphY);
