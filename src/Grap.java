@@ -5,6 +5,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
@@ -46,6 +47,11 @@ public class Grap extends Application {
 
         root.getChildren().addAll(xLabel, yLabel);
 
+        // Добавляем значение 0 на оси Y
+        Text zeroLabelY = new Text(235, 250, "0");
+        zeroLabelY.setFill(Color.BLACK);
+        root.getChildren().add(zeroLabelY);
+
         // Рисуем график функции y = (x^2)/2 - 2
         drawFunction(root);
 
@@ -81,25 +87,37 @@ public class Grap extends Application {
             line.setStroke(Color.BLUE);
             root.getChildren().add(line);
 
-            // Добавляем обработчик событий для отображения координат
-            addMouseHoverEvent(line, x, y);
-
             // Обновляем предыдущую точку
             prevX = x;
             prevY = y;
         }
-    }
 
-    private void addMouseHoverEvent(Line line, double x, double y) {
-        Tooltip tooltip = new Tooltip(String.format("(%.1f, %.1f)", x, y));
-        Tooltip.install(line, tooltip);
+        // Добавляем прозрачный прямоугольник для отслеживания курсора
+        Rectangle trackingArea = new Rectangle(50, 50, 400, 400);
+        trackingArea.setFill(Color.TRANSPARENT);
+        root.getChildren().add(trackingArea);
 
-        line.setOnMouseEntered(event -> {
-            tooltip.show(line, event.getScreenX(), event.getScreenY() + 10);
+        // Создаем Tooltip для отображения координат
+        Tooltip tooltip = new Tooltip();
+        Tooltip.install(trackingArea, tooltip);
+
+        // Добавляем обработчик событий для отображения координат
+        trackingArea.setOnMouseMoved(event -> {
+            double mouseX = event.getX();
+            double mouseY = event.getY();
+
+            // Преобразуем пиксели в координаты графика
+            double graphX = (mouseX - 250) / scaleX;
+            double graphY = (250 - mouseY) / scaleY;
+
+            // Форматируем координаты
+            String coordinates = String.format("X: %.1f, Y: %.1f", graphX, graphY);
+            tooltip.setText(coordinates);
+            tooltip.show(trackingArea, event.getScreenX(), event.getScreenY() + 10);
         });
 
-        line.setOnMouseExited(event -> {
-            tooltip.hide();
+        trackingArea.setOnMouseExited(event -> {
+            tooltip.hide(); // Скрываем Tooltip при выходе мыши
         });
     }
 
