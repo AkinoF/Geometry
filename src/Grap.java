@@ -17,25 +17,25 @@ public class Grap extends Application {
         Group root = new Group();
 
         // Создаем ось X
-        Line xAxis = new Line(50, 250, 450, 250);
+        Line xAxis = new Line(50, 250, 470, 250);
         xAxis.setStroke(Color.BLACK);
 
         // Создаем ось Y
-        Line yAxis = new Line(250, 50, 250, 450);
+        Line yAxis = new Line(250, 30, 250, 470);
         yAxis.setStroke(Color.BLACK);
 
         // Создаем стрелочки для осей
-        createArrow(root, 450, 250, 440, 240);
-        createArrow(root, 450, 250, 440, 260);
-        createArrow(root, 250, 50, 240, 65);
-        createArrow(root, 250, 50, 260, 65);
+        createArrow(root, 470, 250, 460, 240);
+        createArrow(root, 470, 250, 460, 260);
+        createArrow(root, 250, 30, 240, 45);
+        createArrow(root, 250, 30, 260, 45);
 
         // Добавляем оси и стрелочки в корневую группу
         root.getChildren().addAll(xAxis, yAxis);
 
         // Добавляем текстовые метки для осей
-        Text xLabel = new Text(460, 255, "X");
-        Text yLabel = new Text(255, 30, "Y");
+        Text xLabel = new Text(460, 235, "X");
+        Text yLabel = new Text(255, 20, "Y");
         xLabel.setFill(Color.BLACK);
         yLabel.setFill(Color.BLACK);
         xLabel.setStyle("-fx-font-size: 14px;");
@@ -43,11 +43,13 @@ public class Grap extends Application {
 
         root.getChildren().addAll(xLabel, yLabel);
 
-        // Добавляем обозначения на оси Y
-        for (int i = -20; i <= 20; i += 5) { // Изменяем диапазон и шаг
-            Text label = new Text(230, 250 - (i * 10), String.valueOf(i)); // Увеличиваем масштаб для Y
-            label.setFill(Color.BLACK);
-            root.getChildren().add(label);
+        // Добавляем обозначения на оси Y (пропускаем ноль)
+        for (int i = -20; i <= 20; i += 5) {
+            if (i != 0) { // Пропускаем ноль
+                Text label = new Text(230, 250 - (i * 10), String.valueOf(i));
+                label.setFill(Color.BLACK);
+                root.getChildren().add(label);
+            }
         }
 
         // Добавляем значение 0 на оси X
@@ -55,11 +57,13 @@ public class Grap extends Application {
         zeroLabelX.setFill(Color.BLACK);
         root.getChildren().add(zeroLabelX);
 
-        // Добавляем обозначения на оси X
+        // Добавляем обозначения на оси X (пропускаем ноль)
         for (int i = -20; i <= 20; i += 5) {
-            Text label = new Text(250 + (i * 10), 265, String.valueOf(i));
-            label.setFill(Color.BLACK);
-            root.getChildren().add(label);
+            if (i != 0) { // Пропускаем ноль
+                Text label = new Text(250 + (i * 10), 265, String.valueOf(i));
+                label.setFill(Color.BLACK);
+                root.getChildren().add(label);
+            }
         }
 
         // Рисуем график функции y = (x^2)/2 - 2
@@ -73,7 +77,7 @@ public class Grap extends Application {
 
         // Создаем сцену
         Scene scene = new Scene(root, 500, 500);
-        primaryStage.setTitle("График функции");
+        primaryStage.setTitle("ДА ЧТО ТАКОЕ ВАША ГЕОМЕТРИЯ");
         primaryStage.setScene(scene);
         primaryStage.show();
     }
@@ -88,8 +92,8 @@ public class Grap extends Application {
         // Начальные и конечные значения x
         double xStart = -20; // Начало диапазона
         double xEnd = 20;    // Конец диапазона
-        double scaleX = 10;  // Масштаб по оси X
-        double scaleY = 10;  // Масштаб по оси Y
+        double scaleX = 10;   // Масштаб по оси X
+        double scaleY = 10;   // Масштаб по оси Y
 
         // Переменная для хранения предыдущей точки
         double prevX = xStart;
@@ -105,54 +109,45 @@ public class Grap extends Application {
             double pixelY2 = 250 - (y * scaleY);
 
             // Рисуем линию между предыдущей и текущей точкой
-            Line line = new Line(pixelX1, pixelY1, pixelX2, pixelY2);
+            Line line = new Line(pixelX1,pixelY1,pixelX2,pixelY2);
             line.setStroke(Color.BLUE);
-            line.setStrokeWidth(2); // Увеличиваем ширину линии
+            line.setStrokeWidth(2);
             root.getChildren().add(line);
 
-            // Обновляем предыдущую точку
-            prevX = x;
-            prevY = y;
+            prevX=x;
+            prevY=y;
         }
 
-        // Добавляем точку (0, 0)
-        Circle point = new Circle(250, 250, 5, Color.RED);
-        root.getChildren().add(point);
+        Circle point=new Circle(250 ,250 ,5 ,Color.RED );
+        root.getChildren().add(point );
 
-        // Добавляем прозрачный прямоугольник для отслеживания курсора
-        Rectangle trackingArea = new Rectangle(50, 50, 400, 400);
-        trackingArea.setFill(Color.TRANSPARENT);
-        root.getChildren().add(trackingArea);
+        Rectangle trackingArea=new Rectangle(50 ,50 ,400 ,400 );
+        trackingArea.setFill(Color.TRANSPARENT );
+        root.getChildren().add(trackingArea );
 
-        // Создаем Tooltip для отображения координат
-        Tooltip tooltip = new Tooltip();
-        Tooltip.install(trackingArea, tooltip);
+        Tooltip tooltip=new Tooltip();
+        Tooltip.install(trackingArea ,tooltip );
 
-        // Добавляем обработчик событий для отображения координат
         trackingArea.setOnMouseMoved(event -> {
-            double mouseX = event.getX();
-            double mouseY = event.getY();
+            double mouseX=event.getX();
+            double mouseY=event.getY();
 
-            // Преобразуем пиксели в координаты графика
-            double graphX = (mouseX - 250) / scaleX;
-            double graphY = (250 - mouseY) / scaleY; // Получаем y по пиксельной координате
+            double graphX=(mouseX-250)/scaleX;
+            double graphY=(250-mouseY)/scaleY;
 
-            // Форматируем координаты
-            String coordinates = String.format("X: %.1f, Y: %.1f", graphX, graphY);
-            tooltip.setText(coordinates);
-            tooltip.show(trackingArea, event.getScreenX(), event.getScreenY() + 10);
+            String coordinates=String.format("X: %.1f,Y: %.1f",graphX ,graphY );
+            tooltip.setText(coordinates );
+            tooltip.show(trackingArea,event.getScreenX(),event.getScreenY()+10 );
         });
 
-        trackingArea.setOnMouseExited(event -> {
-            tooltip.hide(); // Скрываем Tooltip при выходе мыши
-        });
+        trackingArea.setOnMouseExited(event -> tooltip.hide());
     }
 
     private double calculateY(double x) {
-        return (x * x) / 2 - 2; // Функция y = (x^2)/2 - 2
+        return (x*x)/2-2;
     }
 
     public static void main(String[] args) {
-        launch(args);
+        launch(args );
     }
 }
